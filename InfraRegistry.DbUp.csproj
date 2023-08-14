@@ -1,0 +1,127 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\000_init.sql" />
+    <None Remove="Scripts\001_base.sql" />
+    <None Remove="Scripts\002_foreign_key_update.sql" />
+    <None Remove="Scripts\003_katualueeseen_monta_keskilinjaa.sql" />
+    <None Remove="Scripts\004_varusteiden_relaatioita.sql" />
+    <None Remove="Scripts\005_varuste_for_each_row_trigger.sql" />
+    <None Remove="Scripts\006_qgis_projects_versiointi.sql" />
+    <None Remove="Scripts\007_add_geometry_indexes.sql" />
+    <None Remove="Scripts\008_create_roles.sql" />
+    <None Remove="Scripts\009_fix_name_colum_inheritance.sql" />
+    <None Remove="Scripts\010a_add_missing_location_metadata.sql" />
+    <None Remove="Scripts\010b_add_missing_location_metadata.sql" />
+    <None Remove="Scripts\010c_add_missing_location_metadata.sql" />
+    <None Remove="Scripts\011_remove_extra_relations.sql" />
+    <None Remove="Scripts\012_add_description_to_rakennetyyppi.sql" />
+    <None Remove="Scripts\013_move_keskilinja_to_kohteet_schema.sql" />
+    <None Remove="Scripts\014_type_to_erikoisrakennekerros.sql" />
+    <None Remove="Scripts\015_add_missing_columns.sql" />
+    <None Remove="Scripts\016_move_everything_to_kohteet_schema.sql" />
+    <None Remove="Scripts\017_paatos_for_katualueenosa.sql" />
+    <None Remove="Scripts\018_drop_liikennevalo_and_fix_liikennemerkki_codes.sql" />
+    <None Remove="Scripts\019_implement_suunnitelma_relations.sql" />
+    <None Remove="Scripts\020_missing_metadata_to_abstractvaruste.sql" />
+    <None Remove="Scripts\021_uuid_to_yksilointitieto.sql" />
+    <None Remove="Scripts\022_add_metadata_columns.sql" />
+    <None Remove="Scripts\023a_fix_not_nulls_and_dates_to_timestampz.sql" />
+    <None Remove="Scripts\023b_fix_not_nulls_and_dates_to_timestampz.sql" />
+    <None Remove="Scripts\023c_grant_crud_to_luontitapatyyppi.sql" />
+    <None Remove="Scripts\024_delete_all_data_function.sql" />
+    <None Remove="Scripts\025_fix_geometry_trigger.sql" />
+    <None Remove="Scripts\026_fix_geom_trigger_edge_cases.sql" />
+    <None Remove="Scripts\027_topology_checks.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\000_init.sql" />
+    <EmbeddedResource Include="Scripts\001_base.sql" />
+    <EmbeddedResource Include="Scripts\002_foreign_key_update.sql" />
+    <EmbeddedResource Include="Scripts\003_katualueeseen_monta_keskilinjaa.sql" />
+    <EmbeddedResource Include="Scripts\004_varusteiden_relaatioita.sql" />
+    <EmbeddedResource Include="Scripts\005_varuste_for_each_row_trigger.sql" />
+    <EmbeddedResource Include="Scripts\006_qgis_projects_versiointi.sql" />
+    <EmbeddedResource Include="Scripts\007_add_geometry_indexes.sql" />
+    <EmbeddedResource Include="Scripts\008_create_roles.sql" />
+    <EmbeddedResource Include="Scripts\009_fix_name_colum_inheritance.sql" />
+    <EmbeddedResource Include="Scripts\010a_add_missing_location_metadata.sql" />
+    <EmbeddedResource Include="Scripts\010b_add_missing_location_metadata.sql" />
+    <EmbeddedResource Include="Scripts\010c_add_missing_location_metadata.sql" />
+    <EmbeddedResource Include="Scripts\011_remove_extra_relations.sql" />
+    <EmbeddedResource Include="Scripts\012_add_description_to_rakennetyyppi.sql" />
+    <EmbeddedResource Include="Scripts\013_move_keskilinja_to_kohteet_schema.sql" />
+    <EmbeddedResource Include="Scripts\014_type_to_erikoisrakennekerros.sql" />
+    <EmbeddedResource Include="Scripts\015_add_missing_columns.sql" />
+    <EmbeddedResource Include="Scripts\016_move_everything_to_kohteet_schema.sql" />
+    <EmbeddedResource Include="Scripts\017_paatos_for_katualueenosa.sql" />
+    <EmbeddedResource Include="Scripts\018_drop_liikennevalo_and_fix_liikennemerkki_codes.sql" />
+    <EmbeddedResource Include="Scripts\019_implement_suunnitelma_relations.sql" />
+    <EmbeddedResource Include="Scripts\020_missing_metadata_to_abstractvaruste.sql" />
+    <EmbeddedResource Include="Scripts\021_uuid_to_yksilointitieto.sql" />
+    <EmbeddedResource Include="Scripts\022_add_metadata_columns.sql" />
+    <EmbeddedResource Include="Scripts\023a_fix_not_nulls_and_dates_to_timestampz.sql" />
+    <EmbeddedResource Include="Scripts\023b_fix_not_nulls_and_dates_to_timestampz.sql" />
+    <EmbeddedResource Include="Scripts\023c_grant_crud_to_luontitapatyyppi.sql" />
+    <EmbeddedResource Include="Scripts\024_delete_all_data_function.sql" />
+    <EmbeddedResource Include="Scripts\025_fix_geometry_trigger.sql" />
+    <EmbeddedResource Include="Scripts\026_fix_geom_trigger_edge_cases.sql" />
+    <EmbeddedResource Include="Scripts\027_topology_checks.sql" />
+  </ItemGroup>
+
+  <!-- View scripts -->
+  <ItemGroup>
+    <None Remove="Scripts\views\ajoratamerkinta_view.sql" />
+    <None Remove="Scripts\views\erikoisrakennekerros_view.sql" />
+    <None Remove="Scripts\views\hulevesi_view.sql" />
+    <None Remove="Scripts\views\jate_view.sql" />
+    <None Remove="Scripts\views\kaluste_view.sql" />
+    <None Remove="Scripts\views\leikkivaline_view.sql" />
+    <None Remove="Scripts\views\liikennemerkki_view.sql" />
+    <None Remove="Scripts\views\liikunta_view.sql" />
+    <None Remove="Scripts\views\melu_view.sql" />
+    <None Remove="Scripts\views\muukasvi_view.sql" />
+    <None Remove="Scripts\views\muuvaruste_view.sql" />
+    <None Remove="Scripts\views\opaste_view.sql" />
+    <None Remove="Scripts\views\osoite_view.sql" />
+    <None Remove="Scripts\views\puu_view.sql" />
+    <None Remove="Scripts\views\pysakointiruutu_view.sql" />
+    <None Remove="Scripts\views\rakenne_view.sql" />
+    <None Remove="Scripts\views\ymparistotaide_view.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\views\ajoratamerkinta_view.sql" />
+    <EmbeddedResource Include="Scripts\views\erikoisrakennekerros_view.sql" />
+    <EmbeddedResource Include="Scripts\views\hulevesi_view.sql" />
+    <EmbeddedResource Include="Scripts\views\jate_view.sql" />
+    <EmbeddedResource Include="Scripts\views\kaluste_view.sql" />
+    <EmbeddedResource Include="Scripts\views\leikkivaline_view.sql" />
+    <EmbeddedResource Include="Scripts\views\liikennemerkki_view.sql" />
+    <EmbeddedResource Include="Scripts\views\liikunta_view.sql" />
+    <EmbeddedResource Include="Scripts\views\melu_view.sql" />
+    <EmbeddedResource Include="Scripts\views\muukasvi_view.sql" />
+    <EmbeddedResource Include="Scripts\views\muuvaruste_view.sql" />
+    <EmbeddedResource Include="Scripts\views\opaste_view.sql" />
+    <EmbeddedResource Include="Scripts\views\osoite_view.sql" />
+    <EmbeddedResource Include="Scripts\views\puu_view.sql" />
+    <EmbeddedResource Include="Scripts\views\pysakointiruutu_view.sql" />
+    <EmbeddedResource Include="Scripts\views\rakenne_view.sql" />
+    <EmbeddedResource Include="Scripts\views\ymparistotaide_view.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dbup-core" Version="4.6.3" />
+    <PackageReference Include="dbup-postgresql" Version="4.6.3" />
+    <PackageReference Include="Npgsql" Version="6.0.6" />
+  </ItemGroup>
+
+</Project>
