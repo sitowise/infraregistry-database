@@ -40,6 +40,11 @@
     <None Remove="Scripts\025_fix_geometry_trigger.sql" />
     <None Remove="Scripts\026_fix_geom_trigger_edge_cases.sql" />
     <None Remove="Scripts\027_topology_checks.sql" />
+    <None Remove="Scripts\028_create_ogcapi_collection.sql" />
+    <None Remove="Scripts\029_varuste_toimenpide.sql" />
+    <None Remove="Scripts\030_astractvaruste_additions.sql" />
+    <None Remove="Scripts\031_hulevesi_additions.sql" />
+    <None Remove="Scripts\032_add_unique_constraints_for_yksilointitieto.sql" />
   </ItemGroup>
 
   <ItemGroup>
