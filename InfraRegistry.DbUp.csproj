@@ -45,6 +45,7 @@
     <None Remove="Scripts\030_astractvaruste_additions.sql" />
     <None Remove="Scripts\031_hulevesi_additions.sql" />
     <None Remove="Scripts\032_add_unique_constraints_for_yksilointitieto.sql" />
+    <None Remove="Scripts\033_add_poisto_to_koodisto_varuste_toimenpidetyyppi.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -80,6 +81,12 @@
     <EmbeddedResource Include="Scripts\025_fix_geometry_trigger.sql" />
     <EmbeddedResource Include="Scripts\026_fix_geom_trigger_edge_cases.sql" />
     <EmbeddedResource Include="Scripts\027_topology_checks.sql" />
+    <EmbeddedResource Include="Scripts\028_create_ogcapi_collection.sql" />
+    <EmbeddedResource Include="Scripts\029_varuste_toimenpide.sql" />
+    <EmbeddedResource Include="Scripts\030_astractvaruste_additions.sql" />
+    <EmbeddedResource Include="Scripts\031_hulevesi_additions.sql" />
+    <EmbeddedResource Include="Scripts\032_add_unique_constraints_for_yksilointitieto.sql" />
+    <EmbeddedResource Include="Scripts\033_add_poisto_to_koodisto_varuste_toimenpidetyyppi.sql" />
   </ItemGroup>
 
   <!-- View scripts -->
