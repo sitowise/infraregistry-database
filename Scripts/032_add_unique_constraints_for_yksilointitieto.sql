@@ -1,0 +1,2 @@
+ALTER TABLE kohteet.abstractpaikkatietopalvelukohde ADD CONSTRAINT abstractpaikkatietopalvelukohde_yksilointitieto_key UNIQUE (yksilointitieto);
+ALTER TABLE kohteet.abstractinfraomaisuuskohde ADD CONSTRAINT abstractinfraomaisuuskohde_yksilointitieto_key UNIQUE (yksilointitieto);
