@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW kohteet.muukasvi_view AS
+DROP VIEW IF EXISTS kohteet.muukasvi_view;
+
+CREATE VIEW kohteet.muukasvi_view AS
 SELECT
     id,
     metatieto,
