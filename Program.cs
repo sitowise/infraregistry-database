@@ -97,7 +97,6 @@ catch (Exception e)
     return -1;
 }
 
-
 static UpgradeEngine CreateUpgradeEngine(string connectionString, int srid, string municipalityCode, Func<string, bool> filterScripts, bool useNullJournal = false)
 {
     NpgsqlConnectionStringBuilder connStringBuilder = new(connectionString);
