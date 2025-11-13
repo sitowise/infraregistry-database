@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW kohteet.ymparistotaide_view AS
+DROP VIEW IF EXISTS kohteet.ymparistotaide_view;
+
+CREATE VIEW kohteet.ymparistotaide_view AS
 SELECT
     id,
     metatieto,

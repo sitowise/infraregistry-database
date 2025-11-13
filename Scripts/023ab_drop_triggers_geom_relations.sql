@@ -1,0 +1,15 @@
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.ajoratamerkinta;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.hulevesi;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.jate;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.kaluste;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.katualueenosa;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.leikkivaline;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.liikennemerkki;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.liikunta;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.melu;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.muuvaruste;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.opaste;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.pysakointiruutu;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.rakenne;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.viheralueenosa;
+DROP TRIGGER IF EXISTS geom_relations ON kohteet.ymparistotaide;
