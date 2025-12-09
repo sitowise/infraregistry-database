@@ -1,10 +1,12 @@
 CREATE TABLE kohteet.urakka (
-    id INTEGER CONSTRAINT urakka_pk PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
-    nimi text,
-    urakkanumero INTEGER,
-    alkuhetki timestamptz NOT NULL,
-    loppuhetki timestamptz NULL,
-    geom_poly geometry(POLYGON, $Srid$)
+	id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
+	is_deleted boolean DEFAULT false NOT NULL,
+	nimi text,
+	urakkanumero integer,
+	alkuhetki timestamptz NOT NULL,
+	loppuhetki timestamptz,
+	geom_poly public.geometry(polygon, $Srid$),
+	CONSTRAINT urakka_pk PRIMARY KEY (id)
 );
 
 ALTER TABLE kohteet.urakka OWNER TO $DatabaseOwner$;
