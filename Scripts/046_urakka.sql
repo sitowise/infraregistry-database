@@ -2,8 +2,8 @@ CREATE TABLE kohteet.urakka (
 	id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
 	is_deleted boolean DEFAULT false NOT NULL,
 	nimi text,
-	urakkanumero integer,
-	alkuhetki timestamptz NOT NULL,
+	urakkanumero text,
+	alkuhetki timestamptz,
 	loppuhetki timestamptz,
 	geom_poly public.geometry(polygon, $Srid$),
 	CONSTRAINT urakka_pk PRIMARY KEY (id)
