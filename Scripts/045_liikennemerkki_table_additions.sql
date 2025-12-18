@@ -72,3 +72,10 @@ ALTER TABLE kohteet.liikennemerkki
 	ADD COLUMN lisakilven_vari_id integer
 	REFERENCES kohteet.koodisto_lisakilven_vari (id) MATCH FULL
 	ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- Ensure that one of the liikennemerkki types is always set
+ALTER TABLE kohteet.liikennemerkki
+	ADD CONSTRAINT liikennemerkkityyppi_check CHECK (
+		(liikennemerkkityyppi_id IS NOT NULL)
+		OR (liikennemerkkityyppi2020_id IS NOT NULL)
+	);
