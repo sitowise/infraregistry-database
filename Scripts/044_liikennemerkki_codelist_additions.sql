@@ -47,26 +47,23 @@ INSERT INTO kohteet.koodisto_kalvon_tyyppi (id, selite) VALUES (3, 'r3');
 
 -- VARUSTEMATERIAALI - new codes: vaneri, alumiini
 
-DELETE FROM kohteet.varustemateriaali;
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (1, 'betoni');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (2, 'elementtiverkko');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (3, 'kaksipuolinen teräspalkki');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (4, 'kivi');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (5, 'lasikuitu');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (6, 'metalli');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (7, 'muovi');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (8, 'panssariverkko');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (9, 'putkipalkki');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (10, 'puu');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (11, 'teräs');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (12, 'teräspalkki');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (13, 'teräsverkko');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (14, 'vaijeri');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (15, 'valurauta');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (16, 'vaneri');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (17, 'alumiini');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (18, 'muu');
-INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (19, 'ei tiedossa');
+-- add column for sort order
+ALTER TABLE kohteet.varustemateriaali
+	ADD COLUMN jarjestys double precision NOT NULL DEFAULT 0;
+
+-- set 'ei tiedossa' as the first item
+UPDATE kohteet.varustemateriaali
+	SET jarjestys = -1
+	WHERE selite = 'ei tiedossa';
+
+-- set 'muu' as the last item
+UPDATE kohteet.varustemateriaali	
+	SET jarjestys = 999
+	WHERE selite = 'muu';
+
+-- add new materials
+INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (18, 'vaneri');
+INSERT INTO kohteet.varustemateriaali (id, selite) OVERRIDING SYSTEM VALUE VALUES (19, 'alumiini');
 SELECT setval(pg_get_serial_sequence('kohteet.varustemateriaali', 'id'), (select max(id) from kohteet.varustemateriaali));
 
 -- SIJAINTITARKENNE
