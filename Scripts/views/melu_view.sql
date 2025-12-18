@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW kohteet.melu_view AS
+DROP VIEW IF EXISTS kohteet.melu_view;
+
+CREATE VIEW kohteet.melu_view AS
 SELECT
     id,
     metatieto,

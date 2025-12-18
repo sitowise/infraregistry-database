@@ -3,7 +3,7 @@ This database is a fork of [Gispo's database](https://github.com/GispoCoding/inf
 
 ## Prerequisites
 Ensure you have the following installed:
-- .NET 6 SDK
+- .NET 8 SDK
 - PostgreSQL database + PostGIS extension
 
 ## How to use

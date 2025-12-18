@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW kohteet.osoite_view AS
+DROP VIEW IF EXISTS kohteet.osoite_view;
+
+CREATE VIEW kohteet.osoite_view AS
 SELECT
     id,
     kunta,

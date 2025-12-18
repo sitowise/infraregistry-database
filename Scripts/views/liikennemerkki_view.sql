@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW kohteet.liikennemerkki_view AS
+DROP VIEW IF EXISTS kohteet.liikennemerkki_view;
+
+CREATE VIEW kohteet.liikennemerkki_view AS
 SELECT
     id,
     metatieto,

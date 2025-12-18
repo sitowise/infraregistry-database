@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW kohteet.jate_view AS
+DROP VIEW IF EXISTS kohteet.jate_view;
+
+CREATE VIEW kohteet.jate_view AS
 SELECT
     id,
     metatieto,
