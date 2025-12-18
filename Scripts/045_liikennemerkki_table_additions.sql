@@ -1,7 +1,7 @@
 -- KUNTA - lisätään päätasolle, koska tarvitaan myös käyttöoikeuksien hallintaan
 
 ALTER TABLE kohteet.abstractpaikkatietopalvelukohde
-    ADD COLUMN kunta_id integer NOT NULL;
+    ADD COLUMN kunta_id integer NOT NULL DEFAULT $MunicipalityCode$;
 
 -- ARVO
 
