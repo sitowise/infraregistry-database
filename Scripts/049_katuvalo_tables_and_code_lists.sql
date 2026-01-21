@@ -85,7 +85,7 @@ INSERT INTO kohteet.koodisto_valaisinkeskus_ohjaustapa (id, selite, jarjestys) V
 -- NEW ABSTRACTVARUSTE TABLE - VALAISINKESKUS
 
 CREATE TABLE kohteet.valaisinkeskus (
-    id serial NOT NULL,
+    id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     nimi text,
     kayttopaikan_numero text,
     valaisinkeskus_tyyppi_id integer REFERENCES kohteet.koodisto_valaisinkeskus_tyyppi (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -103,8 +103,7 @@ CREATE TABLE kohteet.valaisinkeskus (
     ohjaustunnus text,
     max_lahtoja integer,
     mitattu_oikosulkuvirta integer,
-    mittauspaiva timestamptz,
-    CONSTRAINT valaisinkeskus_pk PRIMARY KEY (id)
+    mittauspaiva timestamptz
 )
  INHERITS(kohteet.abstractvaruste);
 
@@ -288,7 +287,7 @@ INSERT INTO kohteet.koodisto_valaisin_takuuperusteet (id, selite, jarjestys) VAL
 -- NEW ABSTRACTVARUSTE TABLE - VALAISIN
 
 CREATE TABLE kohteet.valaisin (
-    id serial NOT NULL,
+    id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     valaisinkeskus_id integer REFERENCES kohteet.valaisinkeskus (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
     valaisintyyppi_id integer REFERENCES kohteet.koodisto_valaisintyyppi (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE,
     pylvastyyppi_id integer REFERENCES kohteet.koodisto_valaisin_pylvastyyppi (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -317,8 +316,7 @@ CREATE TABLE kohteet.valaisin (
     valaisin_optiikka text,
     himmennysprofiili boolean,
     lampun_valmistaja text,
-    tarkenne text,
-    CONSTRAINT valaisin_pk PRIMARY KEY (id)
+    tarkenne text
 )
  INHERITS(kohteet.abstractvaruste);
 
@@ -413,14 +411,13 @@ INSERT INTO kohteet.koodisto_ryhmasulake_virta_arvo (id, selite, jarjestys) VALU
 -- NEW ABSTRACTINFRAOMAISUUSKOHDE TABLE - RYHMASULAKE
 
 CREATE TABLE kohteet.ryhmasulake (
-    id serial NOT NULL,
+    id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     valaisinkeskus_id integer REFERENCES kohteet.valaisinkeskus (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
     tyyppi_id integer REFERENCES kohteet.koodisto_ryhmasulake_tyyppi (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE,
     laukaisukayra_id integer REFERENCES kohteet.koodisto_ryhmasulake_laukaisukayra (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE,
     virta_arvo_id integer REFERENCES kohteet.koodisto_ryhmasulake_virta_arvo (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE,
     johdonsuoja_automaatti boolean,
-    ryhmakaapelityyppi text,
-    CONSTRAINT ryhmasulake_pk PRIMARY KEY (id)
+    ryhmakaapelityyppi text
 )
  INHERITS(kohteet.abstractinfraomaisuuskohde);
 
@@ -463,11 +460,10 @@ INSERT INTO kohteet.koodisto_kaapelityyppi (id, selite, jarjestys) VALUES (5, 'm
 -- NEW ABSTRACTVARUSTE TABLE - KAAPELI
 
 CREATE TABLE kohteet.kaapeli (
-    id serial NOT NULL,
+    id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     valaisinkeskus_id integer REFERENCES kohteet.valaisinkeskus (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
     kaapelin_tarkoitus_id integer REFERENCES kohteet.koodisto_kaapeli_tarkoitus (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE,
-    kaapelityyppi_id integer REFERENCES kohteet.koodisto_kaapelityyppi (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT kaapeli_pk PRIMARY KEY (id)
+    kaapelityyppi_id integer REFERENCES kohteet.koodisto_kaapelityyppi (id) MATCH FULL ON DELETE RESTRICT ON UPDATE CASCADE
 )
  INHERITS(kohteet.abstractvaruste);
 
@@ -518,8 +514,8 @@ update
 -- NEW LINK TABLE: VALAISINKESKUS - URAKKA
 
 CREATE TABLE kohteet.valaisinkeskus_urakka (
-    valaisinkeskus_id INTEGER NOT NULL REFERENCES kohteet.valaisinkeskus (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
-    urakka_id INTEGER NOT NULL REFERENCES kohteet.urakka (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    valaisinkeskus_id int NOT NULL REFERENCES kohteet.valaisinkeskus (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    urakka_id int NOT NULL REFERENCES kohteet.urakka (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
     CONSTRAINT valaisinkeskus_urakka_pk PRIMARY KEY (valaisinkeskus_id, urakka_id)
 );
 
@@ -527,8 +523,8 @@ CREATE TABLE kohteet.valaisinkeskus_urakka (
 -- NEW LINK TABLE: VALAISIN - URAKKA
 
 CREATE TABLE kohteet.valaisin_urakka (
-    valaisin_id INTEGER NOT NULL REFERENCES kohteet.valaisin (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
-    urakka_id INTEGER NOT NULL REFERENCES kohteet.urakka (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    valaisin_id int NOT NULL REFERENCES kohteet.valaisin (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    urakka_id int NOT NULL REFERENCES kohteet.urakka (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
     CONSTRAINT valaisin_urakka_pk PRIMARY KEY (valaisin_id, urakka_id)
 );
 
@@ -536,7 +532,7 @@ CREATE TABLE kohteet.valaisin_urakka (
 -- NEW LINK TABLE: KAAPELI - URAKKA
 
 CREATE TABLE kohteet.kaapeli_urakka (
-    kaapeli_id INTEGER NOT NULL REFERENCES kohteet.kaapeli (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
-    urakka_id INTEGER NOT NULL REFERENCES kohteet.urakka (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    kaapeli_id int NOT NULL REFERENCES kohteet.kaapeli (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    urakka_id int NOT NULL REFERENCES kohteet.urakka (id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
     CONSTRAINT kaapeli_urakka_pk PRIMARY KEY (kaapeli_id, urakka_id)
 );
