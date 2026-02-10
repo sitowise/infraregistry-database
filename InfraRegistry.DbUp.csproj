@@ -25,9 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="dbup-core" Version="6.0.15" />
-    <PackageReference Include="dbup-postgresql" Version="6.1.5" />
-    <PackageReference Include="Npgsql" Version="[9.0.4, 10.0.0)" />
+    <PackageReference Include="dbup-core" />
+    <PackageReference Include="dbup-postgresql" />
+    <PackageReference Include="Npgsql" />
   </ItemGroup>
 
 </Project>
