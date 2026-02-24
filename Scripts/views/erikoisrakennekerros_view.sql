@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW kohteet.erikoisrakennekerros_view AS
+DROP VIEW IF EXISTS kohteet.erikoisrakennekerros_view;
+
+CREATE VIEW kohteet.erikoisrakennekerros_view AS
 SELECT
     id,
     erikoisrakennekerrosmateriaalityyppi_id,

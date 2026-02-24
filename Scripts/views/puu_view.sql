@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW kohteet.puu_view AS
+DROP VIEW IF EXISTS kohteet.puu_view;
+
+CREATE VIEW kohteet.puu_view AS
 SELECT
     id,
     metatieto,

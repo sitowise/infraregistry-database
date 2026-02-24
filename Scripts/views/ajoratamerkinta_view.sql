@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW kohteet.ajoratamerkinta_view AS
+DROP VIEW IF EXISTS kohteet.ajoratamerkinta_view;
+
+CREATE VIEW kohteet.ajoratamerkinta_view AS
 SELECT
     id,
     metatieto,

@@ -1,0 +1,12 @@
+DELETE FROM kohteet.jatetyyppi;
+INSERT INTO kohteet.jatetyyppi (id, selite) OVERRIDING SYSTEM VALUE VALUES (1, 'bio');
+INSERT INTO kohteet.jatetyyppi (id, selite) OVERRIDING SYSTEM VALUE VALUES (2, 'huumeruiskuroska-astia');
+INSERT INTO kohteet.jatetyyppi (id, selite) OVERRIDING SYSTEM VALUE VALUES (3, 'jäteastia');
+INSERT INTO kohteet.jatetyyppi (id, selite) OVERRIDING SYSTEM VALUE VALUES (4, 'koiranroska-astia');
+INSERT INTO kohteet.jatetyyppi (id, selite) OVERRIDING SYSTEM VALUE VALUES (5, 'roska-astia tuhkakupilla');
+INSERT INTO kohteet.jatetyyppi (id, selite) OVERRIDING SYSTEM VALUE VALUES (6, 'roskakori');
+INSERT INTO kohteet.jatetyyppi (id, selite) OVERRIDING SYSTEM VALUE VALUES (7, 'roskapussiautomaatti');
+INSERT INTO kohteet.jatetyyppi (id, selite) OVERRIDING SYSTEM VALUE VALUES (8, 'tuhkakuppi');
+INSERT INTO kohteet.jatetyyppi (id, selite) OVERRIDING SYSTEM VALUE VALUES (9, 'muu');
+INSERT INTO kohteet.jatetyyppi (id, selite) OVERRIDING SYSTEM VALUE VALUES (10, 'ei tiedossa');
+SELECT setval(pg_get_serial_sequence('kohteet.jatetyyppi', 'id'), (select max(id) from kohteet.jatetyyppi));
