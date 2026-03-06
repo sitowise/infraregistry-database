@@ -15,7 +15,7 @@ Parameters:
   - 'mark' - Mark all scripts as executed.
   - 'info' - List all scripts that haven't been executed.
 * **[ConnectionString]**:  
-  * `"Server=127.0.0.1;Port=5432;Database=myDataBase;User Id=myUsername;Password=myPassword;"`  
+  * `"Server=my_dbserverhostorip;Port=5432;Database=myDataBase;User Id=myUsername;Password=myPassword;"`  
 * **[Srid]**
   * The SRID (Spatial Reference ID) used in the database.
 * **[Muncipality]**
