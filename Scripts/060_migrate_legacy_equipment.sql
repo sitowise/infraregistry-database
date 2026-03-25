@@ -6,7 +6,7 @@
 -- Uses ON CONFLICT DO NOTHING for idempotency.
 -- ============================================================================
 
-DO $migrate_legacy$
+DO $$
 DECLARE
     v_migrated   integer;
     v_total      integer;
@@ -457,4 +457,4 @@ RAISE NOTICE '========================================';
 RAISE NOTICE 'Legacy equipment migration complete.';
 RAISE NOTICE '========================================';
 
-END $migrate_legacy$;
+END $$;

@@ -121,7 +121,7 @@ ALTER TABLE kohteet.equipment_plan_link OWNER TO $DatabaseOwner$;
 -- Junction table: equipment <-> varustetoimenpide (maintenance actions)
 CREATE TABLE kohteet.equipment_maintenance_action (
     equipment_id          INTEGER NOT NULL REFERENCES kohteet.equipment(id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
-    maintenance_action_id INTEGER NOT NULL REFERENCES kohteet.varustetoimenpide(id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    maintenance_action_id INTEGER NOT NULL REFERENCES kohteet.varuste_toimenpide(id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
     CONSTRAINT equipment_maintenance_action_pk PRIMARY KEY (equipment_id, maintenance_action_id)
 );
 ALTER TABLE kohteet.equipment_maintenance_action OWNER TO $DatabaseOwner$;
