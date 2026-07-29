@@ -4,6 +4,9 @@
 --   060: Legacy equipment data migrated to equipment table
 --   062: valaisinkeskus added to equipment_type (id=17) and data migrated
 --   065: equipment_relationship and equipment_relationship_type tables exist
+--
+-- Note: All INSERT queries filter out soft-deleted equipment (is_deleted = false)
+-- to avoid creating relationships pointing to logically removed records.
 
 DO $$
 DECLARE
@@ -34,6 +37,8 @@ JOIN kohteet.valaisinkeskus vk ON vk.id = v.valaisinkeskus_id
 JOIN kohteet.equipment e_tgt
     ON e_tgt.uuid = vk.yksilointitieto::uuid AND e_tgt.equipment_type_id = 17
 WHERE v.valaisinkeskus_id IS NOT NULL
+  AND e_src.is_deleted = false
+  AND e_tgt.is_deleted = false
 ON CONFLICT ON CONSTRAINT uq_equipment_relationship DO NOTHING;
 
 GET DIAGNOSTICS v_migrated = ROW_COUNT;
@@ -62,6 +67,8 @@ JOIN kohteet.valaisinkeskus vk ON vk.id = r.valaisinkeskus_id
 JOIN kohteet.equipment e_tgt
     ON e_tgt.uuid = vk.yksilointitieto::uuid AND e_tgt.equipment_type_id = 17
 WHERE r.valaisinkeskus_id IS NOT NULL
+  AND e_src.is_deleted = false
+  AND e_tgt.is_deleted = false
 ON CONFLICT ON CONSTRAINT uq_equipment_relationship DO NOTHING;
 
 GET DIAGNOSTICS v_migrated = ROW_COUNT;
@@ -90,6 +97,8 @@ JOIN kohteet.valaisinkeskus vk ON vk.id = k.valaisinkeskus_id
 JOIN kohteet.equipment e_tgt
     ON e_tgt.uuid = vk.yksilointitieto::uuid AND e_tgt.equipment_type_id = 17
 WHERE k.valaisinkeskus_id IS NOT NULL
+  AND e_src.is_deleted = false
+  AND e_tgt.is_deleted = false
 ON CONFLICT ON CONSTRAINT uq_equipment_relationship DO NOTHING;
 
 GET DIAGNOSTICS v_migrated = ROW_COUNT;
@@ -117,6 +126,8 @@ JOIN kohteet.equipment e1
 JOIN kohteet.liikennemerkki lm2 ON lm2.id = lll.liikennemerkki_id2
 JOIN kohteet.equipment e2
     ON e2.uuid = lm2.yksilointitieto::uuid AND e2.equipment_type_id = 4
+WHERE e1.is_deleted = false
+  AND e2.is_deleted = false
 ON CONFLICT ON CONSTRAINT uq_equipment_relationship DO NOTHING;
 
 GET DIAGNOSTICS v_migrated = ROW_COUNT;
