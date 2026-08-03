@@ -204,6 +204,65 @@ ON CONFLICT (uuid) DO NOTHING;
 GET DIAGNOSTICS v_row_count = ROW_COUNT;
 RAISE NOTICE 'jate: migrated % of % records', v_row_count, v_total;
 
+-- Jate junction tables
+INSERT INTO kohteet.equipment_attachment (equipment_id, attachment_id)
+SELECT e.id, jl.liite_id
+FROM kohteet.jate_liite jl
+JOIN kohteet.jate j ON j.id = jl.jate_id
+JOIN kohteet.equipment e ON e.uuid = j.yksilointitieto::uuid AND e.equipment_type_id = 2
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'jate_liite → equipment_attachment: migrated % rows', v_row_count;
+
+INSERT INTO kohteet.equipment_contract (equipment_id, contract_id)
+SELECT e.id, ju.urakka_id
+FROM kohteet.jate_urakka ju
+JOIN kohteet.jate j ON j.id = ju.jate_id
+JOIN kohteet.equipment e ON e.uuid = j.yksilointitieto::uuid AND e.equipment_type_id = 2
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'jate_urakka → equipment_contract: migrated % rows', v_row_count;
+
+INSERT INTO kohteet.equipment_maintenance_action (equipment_id, maintenance_action_id)
+SELECT e.id, jvt.varuste_toimenpide_id
+FROM kohteet.jate_varuste_toimenpide_linkki jvt
+JOIN kohteet.jate j ON j.id = jvt.jate_id
+JOIN kohteet.equipment e ON e.uuid = j.yksilointitieto::uuid AND e.equipment_type_id = 2
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'jate_varuste_toimenpide_linkki → equipment_maintenance_action: migrated % rows', v_row_count;
+
+INSERT INTO kohteet.equipment_plan_link (equipment_id, plan_link_id)
+SELECT e.id, js.suunnitelmalinkki_id
+FROM kohteet.jate_suunnitelmalinkki js
+JOIN kohteet.jate j ON j.id = js.jate_id
+JOIN kohteet.equipment e ON e.uuid = j.yksilointitieto::uuid AND e.equipment_type_id = 2
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'jate_suunnitelmalinkki → equipment_plan_link: migrated % rows', v_row_count;
+
+-- Report orphan rows (junction rows with no matching equipment record)
+SELECT count(*) INTO v_orphan_count
+FROM kohteet.jate j
+WHERE (j.yksilointitieto IS NULL OR j.yksilointitieto !~ v_uuid_pattern)
+  AND EXISTS (
+    SELECT 1 FROM kohteet.jate_liite jl WHERE jl.jate_id = j.id
+    UNION ALL
+    SELECT 1 FROM kohteet.jate_urakka ju WHERE ju.jate_id = j.id
+    UNION ALL
+    SELECT 1 FROM kohteet.jate_varuste_toimenpide_linkki jvt WHERE jvt.jate_id = j.id
+    UNION ALL
+    SELECT 1 FROM kohteet.jate_suunnitelmalinkki js WHERE js.jate_id = j.id
+  );
+
+IF v_orphan_count > 0 THEN
+    RAISE NOTICE 'jate: % orphaned junction rows (parent has no valid UUID → no equipment match)', v_orphan_count;
+END IF;
+
 -- ============================================================================
 -- 3. LIIKENNEMERKKI (equipment_type_id = 4)
 -- ============================================================================
