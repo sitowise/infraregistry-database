@@ -266,7 +266,74 @@ END IF;
 -- ============================================================================
 -- 3. LIIKENNEMERKKI (equipment_type_id = 4)
 -- ============================================================================
--- TODO: Implement liikennemerkki main row migration (Task 5.1)
+-- Note: liikennemerkki_liikennemerkki_linkki is NOT migrated here (handled by 064/065)
+v_table_name := 'liikennemerkki';
+SELECT count(*) INTO v_total FROM kohteet.liikennemerkki;
+RAISE NOTICE 'liikennemerkki: starting migration (% total rows)', v_total;
+
+-- Warn about rows with invalid UUID format (non-NULL but not matching pattern)
+SELECT count(*) INTO v_orphan_count
+FROM kohteet.liikennemerkki
+WHERE yksilointitieto IS NOT NULL
+  AND yksilointitieto !~ v_uuid_pattern;
+
+IF v_orphan_count > 0 THEN
+    RAISE WARNING 'liikennemerkki: skipping % rows with invalid UUID format', v_orphan_count;
+END IF;
+
+-- Insert valid rows (NULL UUID gets generated, valid UUID cast, invalid UUID excluded)
+WITH valid_liikennemerkki AS (
+    SELECT *
+    FROM kohteet.liikennemerkki
+    WHERE yksilointitieto IS NULL
+       OR yksilointitieto ~ v_uuid_pattern
+)
+INSERT INTO kohteet.equipment (
+    equipment_type_id, properties,
+    uuid, metadata, valid_from, valid_to,
+    geom_polygon, geom_point, geom_line,
+    municipality_id,
+    created_at, modified_at, created_by, modified_by,
+    is_deleted,
+    model, manufacturer, manufacture_year, renovation_year,
+    direction, owner, holder, maintainer, additional_info, surveyor,
+    material_id, creation_method_id, location_uncertainty_id,
+    lifecycle_id, status_id, condition_id,
+    address_id, green_area_part_id, street_area_part_id
+)
+SELECT
+    4,
+    jsonb_build_object(
+        'liikennemerkkityyppiId', liikennemerkkityyppi_id,
+        'liikennemerkkityyppi2020Id', liikennemerkkityyppi2020_id,
+        'teksti', teksti,
+        'arvo', arvo,
+        'rakenneId', rakenne_id,
+        'kokoId', koko_id,
+        'korkeus', korkeus,
+        'kalvonTyyppiId', kalvon_tyyppi_id,
+        'sijaintitarkenneId', sijaintitarkenne_id,
+        'kaistanTyyppiId', kaistan_tyyppi_id,
+        'kaistanNumeroId', kaistan_numero_id,
+        'kaksipuoleinenKytkin', kaksipuoleinen_kytkin,
+        'suuntima', suuntima,
+        'lisakilvenVariId', lisakilven_vari_id
+    ),
+    COALESCE(yksilointitieto::uuid, uuid_generate_v4()), metatieto, alkuhetki, loppuhetki,
+    geom_poly, geom_piste, geom_line,
+    kunta_id,
+    luonti_pvm, muokkaus_pvm, datan_luoja, muokkaaja,
+    is_deleted,
+    malli, valmistaja, valmistumisvuosi, perusparannusvuosi,
+    suunta, omistaja, haltija, kunnossapitaja, lisatietoja, inventoija,
+    materiaali_id, luontitapa_id, sijaintiepavarmuus_id,
+    elinkaari_id, tila_id, kunto_id,
+    osoite_id, kuuluuviheralueenosaan, kuuluukatualueenosaan
+FROM valid_liikennemerkki
+ON CONFLICT (uuid) DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'liikennemerkki: migrated % of % records', v_row_count, v_total;
 
 -- ============================================================================
 -- MIGRATION SUMMARY
