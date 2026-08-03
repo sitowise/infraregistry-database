@@ -80,6 +80,65 @@ ON CONFLICT (uuid) DO NOTHING;
 GET DIAGNOSTICS v_row_count = ROW_COUNT;
 RAISE NOTICE 'hulevesi: migrated % of % records', v_row_count, v_total;
 
+-- Hulevesi junction tables
+INSERT INTO kohteet.equipment_attachment (equipment_id, attachment_id)
+SELECT e.id, hl.liite_id
+FROM kohteet.hulevesi_liite hl
+JOIN kohteet.hulevesi h ON h.id = hl.hulevesi_id
+JOIN kohteet.equipment e ON e.uuid = h.yksilointitieto::uuid AND e.equipment_type_id = 1
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'hulevesi_liite → equipment_attachment: migrated % rows', v_row_count;
+
+INSERT INTO kohteet.equipment_contract (equipment_id, contract_id)
+SELECT e.id, hu.urakka_id
+FROM kohteet.hulevesi_urakka hu
+JOIN kohteet.hulevesi h ON h.id = hu.hulevesi_id
+JOIN kohteet.equipment e ON e.uuid = h.yksilointitieto::uuid AND e.equipment_type_id = 1
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'hulevesi_urakka → equipment_contract: migrated % rows', v_row_count;
+
+INSERT INTO kohteet.equipment_maintenance_action (equipment_id, maintenance_action_id)
+SELECT e.id, hvt.varuste_toimenpide_id
+FROM kohteet.hulevesi_varuste_toimenpide_linkki hvt
+JOIN kohteet.hulevesi h ON h.id = hvt.hulevesi_id
+JOIN kohteet.equipment e ON e.uuid = h.yksilointitieto::uuid AND e.equipment_type_id = 1
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'hulevesi_varuste_toimenpide_linkki → equipment_maintenance_action: migrated % rows', v_row_count;
+
+INSERT INTO kohteet.equipment_plan_link (equipment_id, plan_link_id)
+SELECT e.id, hs.suunnitelmalinkki_id
+FROM kohteet.hulevesi_suunnitelmalinkki hs
+JOIN kohteet.hulevesi h ON h.id = hs.hulevesi_id
+JOIN kohteet.equipment e ON e.uuid = h.yksilointitieto::uuid AND e.equipment_type_id = 1
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'hulevesi_suunnitelmalinkki → equipment_plan_link: migrated % rows', v_row_count;
+
+-- Report orphan rows (junction rows with no matching equipment record)
+SELECT count(*) INTO v_orphan_count
+FROM kohteet.hulevesi h
+WHERE (h.yksilointitieto IS NULL OR h.yksilointitieto !~ v_uuid_pattern)
+  AND EXISTS (
+    SELECT 1 FROM kohteet.hulevesi_liite hl WHERE hl.hulevesi_id = h.id
+    UNION ALL
+    SELECT 1 FROM kohteet.hulevesi_urakka hu WHERE hu.hulevesi_id = h.id
+    UNION ALL
+    SELECT 1 FROM kohteet.hulevesi_varuste_toimenpide_linkki hvt WHERE hvt.hulevesi_id = h.id
+    UNION ALL
+    SELECT 1 FROM kohteet.hulevesi_suunnitelmalinkki hs WHERE hs.hulevesi_id = h.id
+  );
+
+IF v_orphan_count > 0 THEN
+    RAISE NOTICE 'hulevesi: % orphaned junction rows (parent has no valid UUID → no equipment match)', v_orphan_count;
+END IF;
+
 -- ============================================================================
 -- 2. JATE (equipment_type_id = 2)
 -- ============================================================================
