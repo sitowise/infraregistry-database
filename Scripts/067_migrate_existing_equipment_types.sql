@@ -335,6 +335,66 @@ ON CONFLICT (uuid) DO NOTHING;
 GET DIAGNOSTICS v_row_count = ROW_COUNT;
 RAISE NOTICE 'liikennemerkki: migrated % of % records', v_row_count, v_total;
 
+-- Liikennemerkki junction tables
+-- Note: liikennemerkki_liikennemerkki_linkki is NOT included (handled by 064/065)
+INSERT INTO kohteet.equipment_attachment (equipment_id, attachment_id)
+SELECT e.id, ll.liite_id
+FROM kohteet.liikennemerkki_liite ll
+JOIN kohteet.liikennemerkki lm ON lm.id = ll.liikennemerkki_id
+JOIN kohteet.equipment e ON e.uuid = lm.yksilointitieto::uuid AND e.equipment_type_id = 4
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'liikennemerkki_liite → equipment_attachment: migrated % rows', v_row_count;
+
+INSERT INTO kohteet.equipment_contract (equipment_id, contract_id)
+SELECT e.id, lu.urakka_id
+FROM kohteet.liikennemerkki_urakka lu
+JOIN kohteet.liikennemerkki lm ON lm.id = lu.liikennemerkki_id
+JOIN kohteet.equipment e ON e.uuid = lm.yksilointitieto::uuid AND e.equipment_type_id = 4
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'liikennemerkki_urakka → equipment_contract: migrated % rows', v_row_count;
+
+INSERT INTO kohteet.equipment_maintenance_action (equipment_id, maintenance_action_id)
+SELECT e.id, lvt.varuste_toimenpide_id
+FROM kohteet.liikennemerkki_varuste_toimenpide_linkki lvt
+JOIN kohteet.liikennemerkki lm ON lm.id = lvt.liikennemerkki_id
+JOIN kohteet.equipment e ON e.uuid = lm.yksilointitieto::uuid AND e.equipment_type_id = 4
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'liikennemerkki_varuste_toimenpide_linkki → equipment_maintenance_action: migrated % rows', v_row_count;
+
+INSERT INTO kohteet.equipment_plan_link (equipment_id, plan_link_id)
+SELECT e.id, ls.suunnitelmalinkki_id
+FROM kohteet.liikennemerkki_suunnitelmalinkki ls
+JOIN kohteet.liikennemerkki lm ON lm.id = ls.liikennemerkki_id
+JOIN kohteet.equipment e ON e.uuid = lm.yksilointitieto::uuid AND e.equipment_type_id = 4
+ON CONFLICT DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'liikennemerkki_suunnitelmalinkki → equipment_plan_link: migrated % rows', v_row_count;
+
+-- Report orphan rows (junction rows with no matching equipment record)
+SELECT count(*) INTO v_orphan_count
+FROM kohteet.liikennemerkki lm
+WHERE (lm.yksilointitieto IS NULL OR lm.yksilointitieto !~ v_uuid_pattern)
+  AND EXISTS (
+    SELECT 1 FROM kohteet.liikennemerkki_liite ll WHERE ll.liikennemerkki_id = lm.id
+    UNION ALL
+    SELECT 1 FROM kohteet.liikennemerkki_urakka lu WHERE lu.liikennemerkki_id = lm.id
+    UNION ALL
+    SELECT 1 FROM kohteet.liikennemerkki_varuste_toimenpide_linkki lvt WHERE lvt.liikennemerkki_id = lm.id
+    UNION ALL
+    SELECT 1 FROM kohteet.liikennemerkki_suunnitelmalinkki ls WHERE ls.liikennemerkki_id = lm.id
+  );
+
+IF v_orphan_count > 0 THEN
+    RAISE NOTICE 'liikennemerkki: % orphaned junction rows (parent has no valid UUID → no equipment match)', v_orphan_count;
+END IF;
+
 -- ============================================================================
 -- MIGRATION SUMMARY
 -- ============================================================================
