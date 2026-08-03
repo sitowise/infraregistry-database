@@ -142,7 +142,67 @@ END IF;
 -- ============================================================================
 -- 2. JATE (equipment_type_id = 2)
 -- ============================================================================
--- TODO: Implement jate main row migration (Task 4.1)
+v_table_name := 'jate';
+SELECT count(*) INTO v_total FROM kohteet.jate;
+RAISE NOTICE 'jate: starting migration (% total rows)', v_total;
+
+-- Warn about rows with invalid UUID format (non-NULL but not matching pattern)
+SELECT count(*) INTO v_orphan_count
+FROM kohteet.jate
+WHERE yksilointitieto IS NOT NULL
+  AND yksilointitieto !~ v_uuid_pattern;
+
+IF v_orphan_count > 0 THEN
+    RAISE WARNING 'jate: skipping % rows with invalid UUID format', v_orphan_count;
+END IF;
+
+-- Insert valid rows (NULL UUID gets generated, valid UUID cast, invalid UUID excluded)
+WITH valid_jate AS (
+    SELECT *
+    FROM kohteet.jate
+    WHERE yksilointitieto IS NULL
+       OR yksilointitieto ~ v_uuid_pattern
+)
+INSERT INTO kohteet.equipment (
+    equipment_type_id, properties,
+    uuid, metadata, valid_from, valid_to,
+    geom_polygon, geom_point, geom_line,
+    municipality_id,
+    created_at, modified_at, created_by, modified_by,
+    is_deleted,
+    model, manufacturer, manufacture_year, renovation_year,
+    direction, owner, holder, maintainer, additional_info, surveyor,
+    material_id, creation_method_id, location_uncertainty_id,
+    lifecycle_id, status_id, condition_id,
+    address_id, green_area_part_id, street_area_part_id
+)
+SELECT
+    2,
+    jsonb_build_object(
+        'jatetyyppiId', jatetyyppi_id,
+        'koko', koko,
+        'putkikeraysjarjestelmaKytkin', putkikeraysjarjestelma_kytkin,
+        'sijaintiMaanPinnallaKytkin', sijainti_maan_pinnalla_kytkin,
+        'vaarallistenJateastiaKytkin', vaarallisten_jateastia_kytkin,
+        'tyhjennysvaliViikkoinaKesa', tyhjennysvali_viikkoina_kesa,
+        'tyhjennysvaliViikkoinaTalvi', tyhjennysvali_viikkoina_talvi,
+        'tarkastusvaliId', tarkastusvali_id
+    ),
+    COALESCE(yksilointitieto::uuid, uuid_generate_v4()), metatieto, alkuhetki, loppuhetki,
+    geom_poly, geom_piste, geom_line,
+    kunta_id,
+    luonti_pvm, muokkaus_pvm, datan_luoja, muokkaaja,
+    is_deleted,
+    malli, valmistaja, valmistumisvuosi, perusparannusvuosi,
+    suunta, omistaja, haltija, kunnossapitaja, lisatietoja, inventoija,
+    materiaali_id, luontitapa_id, sijaintiepavarmuus_id,
+    elinkaari_id, tila_id, kunto_id,
+    osoite_id, kuuluuviheralueenosaan, kuuluukatualueenosaan
+FROM valid_jate
+ON CONFLICT (uuid) DO NOTHING;
+
+GET DIAGNOSTICS v_row_count = ROW_COUNT;
+RAISE NOTICE 'jate: migrated % of % records', v_row_count, v_total;
 
 -- ============================================================================
 -- 3. LIIKENNEMERKKI (equipment_type_id = 4)
