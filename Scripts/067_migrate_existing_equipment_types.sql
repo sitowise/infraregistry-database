@@ -3,19 +3,22 @@
 -- Enhanced/supplementary migration of legacy per-type equipment data into the
 -- generic kohteet.equipment table. Supplements script 060 with:
 --   - UUID format validation (regex-based, skips invalid rows with WARNING)
---   - NULL UUID handling (generates new UUID via uuid_generate_v4())
+--   - NULL UUID handling (pre-fills with uuid_generate_v4() before migration)
 --   - Enhanced per-table and per-junction reporting with orphan row counts
 -- Uses ON CONFLICT DO NOTHING for idempotency (rows already migrated by 060
 -- are safely skipped).
 -- ============================================================================
+-- Depends on: 059 (equipment + equipment_type tables)
+-- Depends on: 060 (initial migration — this script supplements it)
+-- Depends on: 064 (uuid unique index on kohteet.equipment)
+-- Requires: uuid-ossp extension (uuid_generate_v4)
 
 DO $$
 DECLARE
     v_row_count    integer;
     v_orphan_count integer;
-    v_table_name   text;
     v_total        integer;
-    v_uuid_pattern text := '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';
+    v_uuid_pattern text := '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$';
 BEGIN
 
 RAISE NOTICE 'Starting equipment type migration...';
@@ -23,26 +26,32 @@ RAISE NOTICE 'Starting equipment type migration...';
 -- ============================================================================
 -- 1. HULEVESI (equipment_type_id = 1)
 -- ============================================================================
-v_table_name := 'hulevesi';
+
+-- Pre-fill NULL UUIDs so junction table JOINs can resolve correctly
+UPDATE kohteet.hulevesi
+SET yksilointitieto = uuid_generate_v4()::text
+WHERE yksilointitieto IS NULL;
+
 SELECT count(*) INTO v_total FROM kohteet.hulevesi;
 RAISE NOTICE 'hulevesi: starting migration (% total rows)', v_total;
 
 -- Warn about rows with invalid UUID format (non-NULL but not matching pattern)
 SELECT count(*) INTO v_orphan_count
 FROM kohteet.hulevesi
-WHERE yksilointitieto IS NOT NULL
-  AND yksilointitieto !~ v_uuid_pattern;
+WHERE yksilointitieto IS NOT NULL AND yksilointitieto !~ v_uuid_pattern;
 
 IF v_orphan_count > 0 THEN
-    RAISE WARNING 'hulevesi: skipping % rows with invalid UUID format', v_orphan_count;
+    RAISE WARNING 'hulevesi: skipping % rows with invalid UUID format. IDs: %',
+        v_orphan_count,
+        (SELECT array_agg(id) FROM kohteet.hulevesi
+         WHERE yksilointitieto IS NOT NULL AND yksilointitieto !~ v_uuid_pattern);
 END IF;
 
--- Insert valid rows (NULL UUID gets generated, valid UUID cast, invalid UUID excluded)
+-- Insert valid rows (NULLs already pre-filled, invalid UUIDs excluded)
 WITH valid_hulevesi AS (
     SELECT *
     FROM kohteet.hulevesi
-    WHERE yksilointitieto IS NULL
-       OR yksilointitieto ~ v_uuid_pattern
+    WHERE yksilointitieto ~ v_uuid_pattern
 )
 INSERT INTO kohteet.equipment (
     equipment_type_id, properties,
@@ -121,10 +130,10 @@ ON CONFLICT DO NOTHING;
 GET DIAGNOSTICS v_row_count = ROW_COUNT;
 RAISE NOTICE 'hulevesi_suunnitelmalinkki → equipment_plan_link: migrated % rows', v_row_count;
 
--- Report orphan rows (junction rows with no matching equipment record)
+-- Report orphan rows (parents with invalid UUID that were not migrated)
 SELECT count(*) INTO v_orphan_count
 FROM kohteet.hulevesi h
-WHERE (h.yksilointitieto IS NULL OR h.yksilointitieto !~ v_uuid_pattern)
+WHERE h.yksilointitieto IS NOT NULL AND h.yksilointitieto !~ v_uuid_pattern
   AND EXISTS (
     SELECT 1 FROM kohteet.hulevesi_liite hl WHERE hl.hulevesi_id = h.id
     UNION ALL
@@ -136,32 +145,38 @@ WHERE (h.yksilointitieto IS NULL OR h.yksilointitieto !~ v_uuid_pattern)
   );
 
 IF v_orphan_count > 0 THEN
-    RAISE NOTICE 'hulevesi: % orphaned junction rows (parent has no valid UUID → no equipment match)', v_orphan_count;
+    RAISE NOTICE 'hulevesi: % orphaned junction rows (parent has invalid UUID → no equipment match)', v_orphan_count;
 END IF;
 
 -- ============================================================================
 -- 2. JATE (equipment_type_id = 2)
 -- ============================================================================
-v_table_name := 'jate';
+
+-- Pre-fill NULL UUIDs so junction table JOINs can resolve correctly
+UPDATE kohteet.jate
+SET yksilointitieto = uuid_generate_v4()::text
+WHERE yksilointitieto IS NULL;
+
 SELECT count(*) INTO v_total FROM kohteet.jate;
 RAISE NOTICE 'jate: starting migration (% total rows)', v_total;
 
 -- Warn about rows with invalid UUID format (non-NULL but not matching pattern)
 SELECT count(*) INTO v_orphan_count
 FROM kohteet.jate
-WHERE yksilointitieto IS NOT NULL
-  AND yksilointitieto !~ v_uuid_pattern;
+WHERE yksilointitieto IS NOT NULL AND yksilointitieto !~ v_uuid_pattern;
 
 IF v_orphan_count > 0 THEN
-    RAISE WARNING 'jate: skipping % rows with invalid UUID format', v_orphan_count;
+    RAISE WARNING 'jate: skipping % rows with invalid UUID format. IDs: %',
+        v_orphan_count,
+        (SELECT array_agg(id) FROM kohteet.jate
+         WHERE yksilointitieto IS NOT NULL AND yksilointitieto !~ v_uuid_pattern);
 END IF;
 
--- Insert valid rows (NULL UUID gets generated, valid UUID cast, invalid UUID excluded)
+-- Insert valid rows (NULLs already pre-filled, invalid UUIDs excluded)
 WITH valid_jate AS (
     SELECT *
     FROM kohteet.jate
-    WHERE yksilointitieto IS NULL
-       OR yksilointitieto ~ v_uuid_pattern
+    WHERE yksilointitieto ~ v_uuid_pattern
 )
 INSERT INTO kohteet.equipment (
     equipment_type_id, properties,
@@ -245,10 +260,10 @@ ON CONFLICT DO NOTHING;
 GET DIAGNOSTICS v_row_count = ROW_COUNT;
 RAISE NOTICE 'jate_suunnitelmalinkki → equipment_plan_link: migrated % rows', v_row_count;
 
--- Report orphan rows (junction rows with no matching equipment record)
+-- Report orphan rows (parents with invalid UUID that were not migrated)
 SELECT count(*) INTO v_orphan_count
 FROM kohteet.jate j
-WHERE (j.yksilointitieto IS NULL OR j.yksilointitieto !~ v_uuid_pattern)
+WHERE j.yksilointitieto IS NOT NULL AND j.yksilointitieto !~ v_uuid_pattern
   AND EXISTS (
     SELECT 1 FROM kohteet.jate_liite jl WHERE jl.jate_id = j.id
     UNION ALL
@@ -260,33 +275,39 @@ WHERE (j.yksilointitieto IS NULL OR j.yksilointitieto !~ v_uuid_pattern)
   );
 
 IF v_orphan_count > 0 THEN
-    RAISE NOTICE 'jate: % orphaned junction rows (parent has no valid UUID → no equipment match)', v_orphan_count;
+    RAISE NOTICE 'jate: % orphaned junction rows (parent has invalid UUID → no equipment match)', v_orphan_count;
 END IF;
 
 -- ============================================================================
 -- 3. LIIKENNEMERKKI (equipment_type_id = 4)
 -- ============================================================================
 -- Note: liikennemerkki_liikennemerkki_linkki is NOT migrated here (handled by 064/065)
-v_table_name := 'liikennemerkki';
+
+-- Pre-fill NULL UUIDs so junction table JOINs can resolve correctly
+UPDATE kohteet.liikennemerkki
+SET yksilointitieto = uuid_generate_v4()::text
+WHERE yksilointitieto IS NULL;
+
 SELECT count(*) INTO v_total FROM kohteet.liikennemerkki;
 RAISE NOTICE 'liikennemerkki: starting migration (% total rows)', v_total;
 
 -- Warn about rows with invalid UUID format (non-NULL but not matching pattern)
 SELECT count(*) INTO v_orphan_count
 FROM kohteet.liikennemerkki
-WHERE yksilointitieto IS NOT NULL
-  AND yksilointitieto !~ v_uuid_pattern;
+WHERE yksilointitieto IS NOT NULL AND yksilointitieto !~ v_uuid_pattern;
 
 IF v_orphan_count > 0 THEN
-    RAISE WARNING 'liikennemerkki: skipping % rows with invalid UUID format', v_orphan_count;
+    RAISE WARNING 'liikennemerkki: skipping % rows with invalid UUID format. IDs: %',
+        v_orphan_count,
+        (SELECT array_agg(id) FROM kohteet.liikennemerkki
+         WHERE yksilointitieto IS NOT NULL AND yksilointitieto !~ v_uuid_pattern);
 END IF;
 
--- Insert valid rows (NULL UUID gets generated, valid UUID cast, invalid UUID excluded)
+-- Insert valid rows (NULLs already pre-filled, invalid UUIDs excluded)
 WITH valid_liikennemerkki AS (
     SELECT *
     FROM kohteet.liikennemerkki
-    WHERE yksilointitieto IS NULL
-       OR yksilointitieto ~ v_uuid_pattern
+    WHERE yksilointitieto ~ v_uuid_pattern
 )
 INSERT INTO kohteet.equipment (
     equipment_type_id, properties,
@@ -377,10 +398,10 @@ ON CONFLICT DO NOTHING;
 GET DIAGNOSTICS v_row_count = ROW_COUNT;
 RAISE NOTICE 'liikennemerkki_suunnitelmalinkki → equipment_plan_link: migrated % rows', v_row_count;
 
--- Report orphan rows (junction rows with no matching equipment record)
+-- Report orphan rows (parents with invalid UUID that were not migrated)
 SELECT count(*) INTO v_orphan_count
 FROM kohteet.liikennemerkki lm
-WHERE (lm.yksilointitieto IS NULL OR lm.yksilointitieto !~ v_uuid_pattern)
+WHERE lm.yksilointitieto IS NOT NULL AND lm.yksilointitieto !~ v_uuid_pattern
   AND EXISTS (
     SELECT 1 FROM kohteet.liikennemerkki_liite ll WHERE ll.liikennemerkki_id = lm.id
     UNION ALL
@@ -392,7 +413,7 @@ WHERE (lm.yksilointitieto IS NULL OR lm.yksilointitieto !~ v_uuid_pattern)
   );
 
 IF v_orphan_count > 0 THEN
-    RAISE NOTICE 'liikennemerkki: % orphaned junction rows (parent has no valid UUID → no equipment match)', v_orphan_count;
+    RAISE NOTICE 'liikennemerkki: % orphaned junction rows (parent has invalid UUID → no equipment match)', v_orphan_count;
 END IF;
 
 -- ============================================================================
