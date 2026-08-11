@@ -27,7 +27,9 @@ RAISE NOTICE 'Starting equipment type migration...';
 -- 1. HULEVESI (equipment_type_id = 1)
 -- ============================================================================
 
--- Pre-fill NULL UUIDs so junction table JOINs can resolve correctly
+-- Pre-fill NULL UUIDs so junction table JOINs can resolve correctly.
+-- Safe: entire DO-block is transactional; rollback on failure.
+-- On fresh environments (060 + 067 both run), ON CONFLICT handles deduplication.
 UPDATE kohteet.hulevesi
 SET yksilointitieto = uuid_generate_v4()::text
 WHERE yksilointitieto IS NULL;
@@ -152,7 +154,9 @@ END IF;
 -- 2. JATE (equipment_type_id = 2)
 -- ============================================================================
 
--- Pre-fill NULL UUIDs so junction table JOINs can resolve correctly
+-- Pre-fill NULL UUIDs so junction table JOINs can resolve correctly.
+-- Safe: entire DO-block is transactional; rollback on failure.
+-- On fresh environments (060 + 067 both run), ON CONFLICT handles deduplication.
 UPDATE kohteet.jate
 SET yksilointitieto = uuid_generate_v4()::text
 WHERE yksilointitieto IS NULL;
@@ -283,7 +287,9 @@ END IF;
 -- ============================================================================
 -- Note: liikennemerkki_liikennemerkki_linkki is NOT migrated here (handled by 064/065)
 
--- Pre-fill NULL UUIDs so junction table JOINs can resolve correctly
+-- Pre-fill NULL UUIDs so junction table JOINs can resolve correctly.
+-- Safe: entire DO-block is transactional; rollback on failure.
+-- On fresh environments (060 + 067 both run), ON CONFLICT handles deduplication.
 UPDATE kohteet.liikennemerkki
 SET yksilointitieto = uuid_generate_v4()::text
 WHERE yksilointitieto IS NULL;
