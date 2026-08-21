@@ -14,7 +14,8 @@
 -- definitions in InfraRegistry.Core/Schemas/*.schema.json exactly (camelCase).
 
 -- hulevesi_view (equipment_type_id = 1)
-CREATE OR REPLACE VIEW kohteet.hulevesi_view AS
+DROP VIEW IF EXISTS kohteet.hulevesi_view;
+CREATE VIEW kohteet.hulevesi_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -45,7 +46,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 1 AND NOT e.is_deleted;
 
 -- jate_view (equipment_type_id = 2)
-CREATE OR REPLACE VIEW kohteet.jate_view AS
+DROP VIEW IF EXISTS kohteet.jate_view;
+CREATE VIEW kohteet.jate_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -80,7 +82,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 2 AND NOT e.is_deleted;
 
 -- liikennemerkki_view (equipment_type_id = 4)
-CREATE OR REPLACE VIEW kohteet.liikennemerkki_view AS
+DROP VIEW IF EXISTS kohteet.liikennemerkki_view;
+CREATE VIEW kohteet.liikennemerkki_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -113,7 +116,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 4 AND NOT e.is_deleted;
 
 -- kaluste_view (equipment_type_id = 7)
-CREATE OR REPLACE VIEW kohteet.kaluste_view AS
+DROP VIEW IF EXISTS kohteet.kaluste_view;
+CREATE VIEW kohteet.kaluste_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -144,7 +148,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 7 AND NOT e.is_deleted;
 
 -- opaste_view (equipment_type_id = 8)
-CREATE OR REPLACE VIEW kohteet.opaste_view AS
+DROP VIEW IF EXISTS kohteet.opaste_view;
+CREATE VIEW kohteet.opaste_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -175,7 +180,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 8 AND NOT e.is_deleted;
 
 -- ymparistotaide_view (equipment_type_id = 9)
-CREATE OR REPLACE VIEW kohteet.ymparistotaide_view AS
+DROP VIEW IF EXISTS kohteet.ymparistotaide_view;
+CREATE VIEW kohteet.ymparistotaide_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -206,7 +212,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 9 AND NOT e.is_deleted;
 
 -- melu_view (equipment_type_id = 10)
-CREATE OR REPLACE VIEW kohteet.melu_view AS
+DROP VIEW IF EXISTS kohteet.melu_view;
+CREATE VIEW kohteet.melu_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -237,7 +244,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 10 AND NOT e.is_deleted;
 
 -- leikkivaline_view (equipment_type_id = 11)
-CREATE OR REPLACE VIEW kohteet.leikkivaline_view AS
+DROP VIEW IF EXISTS kohteet.leikkivaline_view;
+CREATE VIEW kohteet.leikkivaline_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -270,7 +278,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 11 AND NOT e.is_deleted;
 
 -- liikunta_view (equipment_type_id = 12)
-CREATE OR REPLACE VIEW kohteet.liikunta_view AS
+DROP VIEW IF EXISTS kohteet.liikunta_view;
+CREATE VIEW kohteet.liikunta_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -301,7 +310,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 12 AND NOT e.is_deleted;
 
 -- pysakointiruutu_view (equipment_type_id = 13)
-CREATE OR REPLACE VIEW kohteet.pysakointiruutu_view AS
+DROP VIEW IF EXISTS kohteet.pysakointiruutu_view;
+CREATE VIEW kohteet.pysakointiruutu_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -332,7 +342,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 13 AND NOT e.is_deleted;
 
 -- rakenne_view (equipment_type_id = 14)
-CREATE OR REPLACE VIEW kohteet.rakenne_view AS
+DROP VIEW IF EXISTS kohteet.rakenne_view;
+CREATE VIEW kohteet.rakenne_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -363,7 +374,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 14 AND NOT e.is_deleted;
 
 -- ajoratamerkinta_view (equipment_type_id = 15)
-CREATE OR REPLACE VIEW kohteet.ajoratamerkinta_view AS
+DROP VIEW IF EXISTS kohteet.ajoratamerkinta_view;
+CREATE VIEW kohteet.ajoratamerkinta_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
@@ -395,7 +407,8 @@ FROM kohteet.equipment e
 WHERE e.equipment_type_id = 15 AND NOT e.is_deleted;
 
 -- muuvaruste_view (equipment_type_id = 16)
-CREATE OR REPLACE VIEW kohteet.muuvaruste_view AS
+DROP VIEW IF EXISTS kohteet.muuvaruste_view;
+CREATE VIEW kohteet.muuvaruste_view AS
 SELECT
     e.id,
     e.metadata AS metatieto,
