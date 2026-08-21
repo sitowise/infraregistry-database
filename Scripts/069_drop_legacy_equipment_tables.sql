@@ -149,6 +149,6 @@ BEGIN
   -- ============================================================
   RAISE NOTICE 'Vaihe 4: Dropping abstract base table...';
 
-  DROP TABLE IF EXISTS abstraktit.abstractvaruste CASCADE;
+  DROP TABLE IF EXISTS kohteet.abstractvaruste CASCADE;
 
 END $$;
