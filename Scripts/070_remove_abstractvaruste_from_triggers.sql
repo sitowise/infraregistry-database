@@ -13,12 +13,17 @@
 --     - Removed Cases 1a, 1b, 2a, 2b (UPDATE kohteet.abstractvaruste ...)
 --     - Preserved Cases 1a-eq, 1b-eq, 2a-eq, 2b-eq (equipment) and
 --       keskilinja blocks (Cases 1, 2)
+--     - Removed stale legacy per-type table names from IF table_name IN (...)
+--       since those tables are dropped by script 069 — only keskilinja,
+--       viheralueenosa, katualueenosa, and equipment remain
 --
 --   geom_relations_for_each_row():
 --     - Changed ARRAY['abstractvaruste', 'abstractkasvillisuus'] to
 --       ARRAY['abstractkasvillisuus'] in the viheralueenosa/katualueenosa branch
 --     - Removed the equipment update/remove blocks that referenced
 --       abstractvaruste via the loop
+--     - Removed stale legacy per-type table names from IF table_name IN (...)
+--       — only puu and muukasvi remain (kasvillisuus with per-type tables)
 -- ============================================================================
 
 CREATE OR REPLACE FUNCTION kohteet.geom_relations()
@@ -31,9 +36,6 @@ DECLARE
 BEGIN
     table_name := TG_TABLE_NAME;
     IF table_name IN ('keskilinja', 'viheralueenosa', 'katualueenosa',
-                      'ajoratamerkinta', 'hulevesi', 'jate', 'kaapeli', 'kaluste', 'leikkivaline', 'liikennemerkki',
-                      'liikunta', 'melu', 'muuvaruste', 'opaste', 'pysakointiruutu', 'rakenne', 'valaisin',
-                      'valaisinkeskus', 'ymparistotaide',
                       'equipment') THEN
 
         --
@@ -289,10 +291,7 @@ BEGIN
         RETURN NEW;
     END IF;
 
-    IF table_name IN ('ajoratamerkinta', 'hulevesi', 'jate', 'kaapeli', 'kaluste', 'leikkivaline', 'liikennemerkki',
-                      'liikunta', 'melu', 'muuvaruste', 'opaste', 'pysakointiruutu', 'rakenne', 'valaisin',
-                      'valaisinkeskus', 'ymparistotaide',
-                      'puu', 'muukasvi') THEN
+    IF table_name IN ('puu', 'muukasvi') THEN
         --
         -- Case 1: add/update current kuuluukatualueeseen/kuuluuviheralueeseen relations
         --
