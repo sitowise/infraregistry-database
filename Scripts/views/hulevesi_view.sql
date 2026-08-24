@@ -1,30 +1,29 @@
-DROP VIEW IF EXISTS kohteet.hulevesi_view;
-
-CREATE VIEW kohteet.hulevesi_view AS
+CREATE OR REPLACE VIEW kohteet.hulevesi_view AS
 SELECT
-    id,
-    metatieto,
-    yksilointitieto,
-    alkuhetki,
-    loppuhetki,
-    malli,
-    perusparannusvuosi,
-    suunta,
-    valmistaja,
-    valmistumisvuosi,
-    kuuluuviheralueenosaan,
-    kuuluukatualueenosaan,
-    materiaali_id,
-    ST_SetSRID(ST_Collect(ARRAY[geom_poly, geom_piste, geom_line]), $Srid$)::geometry(Geometry, $Srid$) AS geom,
-    hulevesityyppi_id,
-    luontitapa_id,
-    osoite_id,
-    sijaintiepavarmuus_id,
-    omistaja,
-    haltija,
-    kunnossapitaja,
-    luonti_pvm,
-    muokkaus_pvm,
-    datan_luoja,
-    muokkaaja
-FROM kohteet.hulevesi;
+    e.id,
+    e.metadata AS metatieto,
+    e.uuid::text AS yksilointitieto,
+    e.valid_from AS alkuhetki,
+    e.valid_to AS loppuhetki,
+    e.model AS malli,
+    e.renovation_year AS perusparannusvuosi,
+    e.direction AS suunta,
+    e.manufacturer AS valmistaja,
+    e.manufacture_year AS valmistumisvuosi,
+    e.green_area_part_id AS kuuluuviheralueenosaan,
+    e.street_area_part_id AS kuuluukatualueenosaan,
+    e.material_id AS materiaali_id,
+    ST_SetSRID(ST_Collect(ARRAY[e.geom_polygon::geometry, e.geom_point::geometry, e.geom_line::geometry]), $Srid$)::geometry(Geometry, $Srid$) AS geom,
+    (e.properties->>'hulevesityyppiId')::integer AS hulevesityyppi_id,
+    e.creation_method_id AS luontitapa_id,
+    e.address_id AS osoite_id,
+    e.location_uncertainty_id AS sijaintiepavarmuus_id,
+    e.owner AS omistaja,
+    e.holder AS haltija,
+    e.maintainer AS kunnossapitaja,
+    e.created_at AS luonti_pvm,
+    e.modified_at AS muokkaus_pvm,
+    e.created_by AS datan_luoja,
+    e.modified_by AS muokkaaja
+FROM kohteet.equipment e
+WHERE e.equipment_type_id = 1 AND NOT e.is_deleted;
